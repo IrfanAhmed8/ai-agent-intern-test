@@ -28,12 +28,12 @@ class Retriever:
             query_embedding=query_embedding,
             k=retrieve_k,
         )
+        print(f"Retrieved {len(candidates)} candidates from vector store.")
 
         # Apply deterministic metadata-aware reranking.
         reranked = self.reranker.rerank(
             candidates
         )
-
         return select_context(
             reranked,
             max_chunks=k,

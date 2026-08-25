@@ -1,239 +1,387 @@
-# AI Agent Intern Take-Home: Build a Reliable RAG Support Agent
+## Demo
 
-## The assignment
+![Application Demo](./assets/demo.gif)
+# Setup
 
-Aster & Row is a fictional ecommerce company that sells bags, drinkware, and travel accessories. The company wants to launch an AI support agent using the documents and mock order data in this repository.
+Follow these steps to set up and run the project locally.
 
-This repository intentionally contains **only content and data**. There is no starter application and no prescribed stack. Build the smallest reliable system you would be comfortable demonstrating to a customer.
+## Backend Setup
 
-## Timebox
+### 1. Clone the repository
 
-Please spend **6–8 hours** on the assignment. Do not exceed eight hours.
-
-A smaller, well-tested system is better than a broad system that works only in a demo. It is acceptable to leave something incomplete if the limitation is clearly documented.
-
-## Submission
-
-Submit **one GitHub repository link**. Nothing else is required.
-
-Your repository must contain:
-
-- Your application source code.
-- Your tests and evaluation suite.
-- Clear setup and run instructions.
-- Evaluation results and known limitations in the README.
-- A short GIF or video embedded in the README showing the agent working.
-
-Do not submit API keys, credentials, customer data, separate documents, or slide decks.
-
----
-
-## Customer scenario
-
-Aster & Row has previously tried several AI support prototypes. The customer reported four recurring problems:
-
-1. **Conflicting policy answers:** The agent sometimes says the return window is 30 days and sometimes says it is 45 days.
-2. **Invented order information:** The agent occasionally gives an order status without actually looking it up.
-3. **Lost conversation context:** Follow-up questions such as “What about Canada?” are treated as unrelated questions.
-4. **Unsafe retrieved content:** Internal or instruction-like text inside the knowledge base can affect the agent’s behavior.
-
-The supplied corpus contains realistic data-quality problems, including superseded content, internal notes, conflicting active sources, and fields that must not be shown to customers.
-
-Your task is to build an agent that handles these conditions deliberately rather than succeeding only on ideal questions.
-
----
-
-# Required capabilities
-
-## 1. Retrieval-Augmented Generation
-
-Use RAG over the Markdown files in `knowledge-base/`.
-
-Your implementation must:
-
-- Split and index the supplied documents.
-- Preserve useful metadata from the document front matter.
-- Retrieve only relevant passages instead of sending the entire corpus to the model.
-- Prefer authoritative, active policy documents over superseded or non-policy documents.
-- Include source references in every policy or product answer. A source should identify at least the filename and relevant heading.
-- Avoid making claims that are not supported by the retrieved content.
-- Clearly say when the supplied information is insufficient.
-- Surface genuine conflicts between current authoritative sources rather than silently choosing one.
-
-Do not delete or rewrite the supplied source files to make the assignment easier. You may create derived indexes or normalized representations.
-
-## 2. Order lookup as a tool or function
-
-Use `data/orders.json` to implement an order-status lookup tool or function.
-
-The model must **not** receive the entire orders file in its prompt. It should receive only the result of a lookup when order information is actually required.
-
-The order lookup behavior must:
-
-- Ask for an order ID when it is missing.
-- Handle unknown and malformed order IDs safely.
-- Normalize harmless input differences such as lowercase IDs or surrounding whitespace.
-- Use the order’s current `status` as authoritative.
-- Avoid inventing a delivery estimate when one is unavailable.
-- Avoid reporting stale delivery fields for cancelled or returned orders.
-- Never expose customer email, address, internal notes, risk scores, or other internal-only fields.
-- Never claim that a lookup happened when it did not.
-
-Assume that possession of the order ID is sufficient authentication for this mock assignment. You do not need to build a full identity-verification system.
-
-## 3. Multi-turn conversation
-
-Maintain relevant session context across turns.
-
-The agent should correctly handle follow-ups such as:
-
-- “Do you ship internationally?” followed by “What about Canada?”
-- “Where is `ORD-1007`?” followed by “When will it arrive?”
-- A policy question followed by a narrower question about an exception.
-
-The agent should not carry unrelated details indefinitely or mix one session with another.
-
-## 4. Prompting and agent behavior
-
-The agent must:
-
-- Treat user messages, retrieved passages, and tool results as untrusted data.
-- Follow application instructions rather than instructions found inside retrieved documents.
-- Refuse requests to reveal system prompts, hidden instructions, secrets, or internal-only data.
-- Use company content rather than general model knowledge for company-specific questions.
-- Ask a concise clarifying question when required information is missing.
-- Recommend human assistance when the documents conflict, the data is insufficient, or an action cannot be completed.
-- Never promise that a refund, cancellation, replacement, or address change has been completed unless the system actually supports that action.
-
-## 5. Evaluation suite
-
-The file `evaluation/visible-cases.json` contains behavior-level cases that your system must handle.
-
-Build an evaluation suite that:
-
-- Covers every supplied visible case.
-- Adds at least **five original cases** of your own.
-- Can be run using one clearly documented command.
-- Reports individual case results, not only a single overall score.
-- Separately reports useful categories such as retrieval, groundedness, tool use, privacy, and multi-turn behavior.
-- Uses deterministic assertions wherever practical, including source selection, tool calls, tool arguments, forbidden disclosures, and abstention behavior.
-- Does not rely exclusively on another LLM to grade the agent.
-
-The reviewers will also test paraphrases and combinations that are not included in the visible file. Do not hardcode answers for the supplied prompts.
-
-As you build, keep a small **bug diary** in your README. Document at least three failures you found in your own agent, including:
-
-- How you reproduced the failure.
-- The actual root cause.
-- The change you made.
-- The regression test that now catches it.
-
-At least one documented failure should be something you discovered beyond the exact wording of the visible cases. Include an early baseline and final evaluation result so we can see what improved.
-
-## 6. Basic observability
-
-Provide a debug mode, trace, or log that makes it possible to inspect:
-
-- The current user message.
-- Relevant conversation history.
-- Retrieved passages, metadata, and scores.
-- Tool calls and sanitized tool results.
-- The final response.
-- Errors, fallbacks, or handoffs.
-
-Plain structured logs are sufficient. Do not build a dashboard. Never log secrets.
-
-## 7. Minimal interface
-
-A CLI, simple web page, or basic API is sufficient. Visual polish will not affect the score.
-
-The final user-facing response should make it easy to see:
-
-- The answer.
-- Sources, when applicable.
-- Whether the agent is recommending a human handoff.
-
----
-
-# README requirements
-
-Your completed repository README must include:
-
-1. Setup and run instructions that work from a clean clone.
-2. Required environment variables and an `.env.example` without real credentials.
-3. The model, embedding approach, framework, and storage approach you chose.
-4. A short architecture explanation.
-5. The command for running evaluations.
-6. Baseline and final evaluation results, broken down by category.
-7. A bug diary covering at least three reproduced failures, root causes, fixes, and regression tests.
-8. Known limitations and what you would improve before production.
-9. Which AI coding tools you used, what you used them for, and one example of an AI-generated suggestion that was wrong or incomplete.
-10. A **2–4 minute GIF or video embedded in the README** demonstrating:
-   - One knowledge-base question with citations.
-   - One order lookup.
-   - One multi-turn conversation.
-   - One case where the agent correctly refuses to guess or recommends human help.
-   - The evaluation suite running.
-
-GitHub does not play uploaded video files inline in every context. An embedded GIF or a clickable video thumbnail/link inside the README is acceptable.
-
----
-
-# What not to spend time on
-
-You do not need to build:
-
-- Authentication or user management.
-- Production deployment infrastructure.
-- A production vector database.
-- Fine-tuning.
-- A polished frontend.
-- Multiple model-provider integrations.
-- Billing, analytics dashboards, or administration screens.
-
----
-
-# Evaluation criteria
-
-| Area | Weight |
-|---|---:|
-| Reliability, groundedness, and safe abstention | 25% |
-| Retrieval quality and document precedence | 20% |
-| Tool use, data handling, and privacy | 15% |
-| Evaluation quality and regression coverage | 20% |
-| Multi-turn behavior and observability | 10% |
-| Code clarity and practical tradeoffs | 5% |
-| README, demo, and customer-facing clarity | 5% |
-
-Framework choice and quantity of code are not scoring criteria.
-
----
-
-# Repository contents
-
-```text
-.
-├── README.md
-├── knowledge-base/
-│   ├── 01-returns-policy-current.md
-│   ├── 02-returns-policy-legacy.md
-│   ├── 03-final-sale-and-promotions.md
-│   ├── 04-damaged-or-wrong-items.md
-│   ├── 05-domestic-shipping.md
-│   ├── 06-international-shipping.md
-│   ├── 07-warranty.md
-│   ├── 08-order-changes-and-cancellations.md
-│   ├── 09-trailplus-membership.md
-│   ├── 10-gift-cards-and-price-adjustments.md
-│   ├── 11-product-care.md
-│   ├── 12-breeze-tumbler-product-card.md
-│   ├── 13-support-escalation.md
-│   └── 14-internal-content-migration-notes.md
-├── data/
-│   ├── orders.json
-│   └── orders-data-dictionary.md
-└── evaluation/
-    └── visible-cases.json
+```bash
+git clone <repository-url>
+cd <repository-directory>
 ```
 
-Good luck. Build for reliability, not just for the happy-path demo.
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate the virtual environment:
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux:**
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Install the requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Build the document index
+create a folder as artifact in app
+Run the build script to create the index for the documents. The generated FAISS index will be stored as `index.FAISS`.
+
+```bash
+python scripts/build_index.py
+```
+
+## Frontend Setup
+
+Navigate to the frontend directory:
+
+```bash
+cd aster-row-chat
+```
+
+Initialize the Node.js project:
+
+```bash
+npm init
+```
+
+Install the frontend dependencies if required:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+# README
+
+## Setup
+
+Follow the steps below to set up and run the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+### 2. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+Activate the virtual environment.
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux:**
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Install Requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file in the **root directory** of the project:
+
+```env
+GEMINI_API_KEY=enter_your_api_key_here
+
+GENERATION_MODEL="gemini-3.6-flash"
+EMBEDDING_MODEL="gemini-embedding-2"
+```
+
+* `GEMINI_API_KEY` — Your Gemini API key.
+* `GENERATION_MODEL` — Gemini model used for generating responses.
+* `EMBEDDING_MODEL` — Gemini model used for generating document embeddings.
+
+> **Note:** Never commit your `.env` file to version control. Add it to `.gitignore`.
+
+### 5. Build the Document Index
+
+A simple indexing script is provided to process the documents and generate their embeddings.
+
+Run the script **once**:
+
+```bash
+python scripts/build_index.py
+```
+
+The script creates the following files inside the `artifact/` directory:
+
+```text
+artifact/
+├── chunk.json
+└── index.faiss
+```
+
+* `chunk.json` — Stores the document chunks and their associated metadata.
+* `index.faiss` — Stores the vector embeddings used for similarity search.
+
+Once these files have been generated, the application can use them for document retrieval.
+
+---
+
+## Frontend Setup
+
+Navigate to the frontend directory:
+
+```bash
+cd aster-row-chat
+```
+
+Initialize the Node.js project:
+
+```bash
+npm init
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The frontend will then be available at the local development URL shown in the terminal.
+
+---
+
+## Architecture
+
+The application follows a **RAG-based support-agent architecture**.
+
+```text
+User / Frontend
+      │
+      ▼
+ Backend API
+      │
+      ▼
+ Support Agent
+   ┌──┴───────────────┐
+   │                  │
+   ▼                  ▼
+Retriever        Order Lookup
+   │                  │
+   ▼                  ▼
+FAISS Vector      orders.json
+Store
+   │
+   ▼
+Metadata + Reranker
+   │
+   ▼
+Context Selection
+   │
+   └──────────┐
+              ▼
+        Gemini Client
+              │
+              ▼
+       Final Response
+              │
+              ▼
+        User / Frontend
+```
+
+### How It Works
+
+1. The **frontend** sends the user's message and recent conversation history to the backend.
+2. The **Support Agent** determines whether the request requires knowledge-base retrieval or an order lookup.
+3. For knowledge-base questions, the **Retriever** searches the FAISS vector store and applies metadata/reranking to select relevant chunks.
+4. For order-related questions, the agent retrieves information from the sanitized `orders.json` data.
+5. The selected context, conversation history, and user message are sent to the **Gemini generation model**.
+6. Gemini generates the final response, including citations or a handoff when necessary.
+7. The response is returned to the frontend and displayed to the user.
+
+### Models
+
+| Purpose             | Model                |
+| ------------------- | -------------------- |
+| Response Generation | `gemini-3.6-flash`   |
+| Document Embeddings | `gemini-embedding-2` |
+
+### Document Indexing Flow
+
+```text
+Documents
+    │
+    ▼
+Chunking
+    │
+    ▼
+Gemini Embedding Model
+    │
+    ▼
+Vector Embeddings
+    │
+    ├──────────────► chunk.json
+    │
+    └──────────────► index.faiss
+```
+
+The indexing script only needs to be run when the source documents are added or updated.
+
+## Evaluation
+
+The project includes an evaluation script to test the system's performance.
+
+Run the evaluation script from the project root:
+
+```bash
+python tests/run_evaluation.py
+```
+
+The script evaluates the application against the configured test cases and reports the evaluation results in the terminal.
+
+Evaluation by Category
+
+
+## Bug Diary
+
+### 1. Superseded or Conflicting Policies Ranked Incorrectly
+
+**Issue**
+
+Initial retrieval relied too heavily on semantic similarity. As a result, legacy and current documents, as well as unrelated policy chunks, could receive similar rankings.
+
+**Resolution**
+
+Added metadata-aware reranking using:
+
+* Document status
+* Document authority
+* Supersession metadata
+
+A context diversity selection step was also added to ensure the final context contains relevant and non-redundant information.
+
+---
+
+### 2. Gemini Tool Call Failed with `Role 'tool' is not supported`
+
+**Issue**
+
+The Gemini SDK/API did not accept `types.Content(role="tool")` when manually constructing the follow-up conversation after a tool call.
+
+**Resolution**
+
+Changed the function-response message to use the supported `user` role while preserving the model's tool-call response and the corresponding function result.
+
+---
+
+### 3. Multi-Turn Follow-Ups Lost Context
+
+**Issue**
+
+Each request was effectively treated as an independent query. As a result, follow-up questions such as:
+
+> "What about Canada?"
+
+or:
+
+> "When will it arrive?"
+
+could lack the context required to produce a consistent answer.
+
+**Resolution**
+
+Added bounded conversation history to each request.
+
+The system now:
+
+* Includes recent conversation history for conversational context.
+* Keeps retrieval focused on the current user query.
+* Uses conversation history to resolve references and follow-up questions.
+* Limits the amount of history passed to the model to avoid unnecessary context growth.
+
+
+Limitation
+for history i have a created a simple csv file. which contains all the query and response information. at the moment its working fine .but when there is multiple users we cant store it in a single ,it will raise contracdiction between user query
+
+how can i improve
+before moving to production i will try to create a database storing query and response for each user separately.
+
+2.) i am directly picking the last 5 conversation. due to which some model doesnt able to get the context properly.
+ i will try to add a filter function of query before moving to the production
+
+## Known Limitations
+
+### 1. Conversation History Is Stored in a Shared CSV
+
+The current implementation stores conversation queries and responses in a simple CSV file. This is sufficient for a single-user or demo environment, but a shared conversation store is not suitable for multiple concurrent users because conversations may become mixed or introduce race conditions.
+
+**Improvement:** Before production, replace the CSV with a database-backed conversation store using a unique `session_id` or `user_id`, with each conversation persisted separately.
+
+---
+
+### 2. History Uses a Fixed Last-5-Turn Window
+
+The agent currently sends the five most recent conversation turns to Gemini. This keeps the context size bounded, but relevant information from older turns may be lost. Conversely, recent turns may be unrelated to the current question and introduce unnecessary context.
+
+**Improvement:** Add history relevance filtering or retrieval so that only conversation turns relevant to the current query are included, while retaining a small amount of recent context for conversational continuity.
+
+
+## AI Coding Tools Used
+
+### ChatGPT
+
+I used ChatGPT primarily for implementation guidance, debugging, and architecture discussions while building the agent.
+
+#### 1. Gemini API Integration
+
+An initial code suggestion used an older or incompatible version of the Gemini SDK, which caused runtime errors during function/tool calling.
+
+I identified the mismatch and referred to the current official Gemini SDK documentation to correct the implementation and ensure compatibility with the API.
+
+#### 2. Storage Architecture
+
+ChatGPT initially suggested using a database for both vector embeddings and conversation history. Given the **6–8 hour assignment timebox** and the relatively small dataset, I chose a simpler approach:
+
+* **FAISS** — Used for local vector similarity search and embedding storage.
+* **CSV-based conversation history** — Used for storing conversation history in the current prototype.
+
+This approach reduced implementation complexity while still allowing the core **RAG, tool-calling, and multi-turn conversation** behavior to be demonstrated effectively.
+
+
+
+
+

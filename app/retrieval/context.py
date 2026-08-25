@@ -30,3 +30,33 @@ def select_context(
             break
 
     return selected
+
+
+def format_context(results: list[dict]) -> str:
+    """
+    Convert selected retrieval results into explicit,
+    metadata-rich context for the LLM.
+    """
+
+    sections = []
+
+    for result in results:
+        chunk = result["chunk"]
+
+        metadata = chunk["metadata"]
+
+        section = f"""
+SOURCE
+filename: {chunk["source_file"]}
+heading: {chunk.get("heading") or "Document"}
+status: {metadata["status"]}
+audience: {metadata["audience"]}
+policy_authority: {metadata["policy_authority"]}
+
+CONTENT:
+{chunk["text"]}
+"""
+
+        sections.append(section.strip())
+
+    return "\n\n---\n\n".join(sections)

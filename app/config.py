@@ -7,7 +7,7 @@ load_dotenv()
 
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GENERATION_MODEL = "gemini-flash-latest"
+GENERATION_MODEL = "gemini-3.6-flash"
 EMBEDDING_MODEL = "gemini-embedding-2"
 
 if not GEMINI_API_KEY:
