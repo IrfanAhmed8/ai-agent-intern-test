@@ -44,14 +44,14 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configure Environment Variables
+Used
+GENERATION_MODEL="gemini-3.6-flash"
+EMBEDDING_MODEL="gemini-embedding-2"
 
 Create a `.env` file in the **root directory** of the project:
 
 ```env
 GEMINI_API_KEY=enter_your_api_key_here
-
-GENERATION_MODEL="gemini-3.6-flash"
-EMBEDDING_MODEL="gemini-embedding-2"
 ```
 
 * `GEMINI_API_KEY` — Your Gemini API key.
@@ -194,7 +194,7 @@ The indexing script only needs to be run when the source documents are added or 
 
 The evaluation suite is implemented in `tests/run_evaluation.py`. It runs behavior-level evaluation cases and checks the agent against expected outcomes such as retrieval quality, grounding, tool usage, privacy, multi-turn behavior, and safe handoff.
 
-> **Note:** Limit is hit due to the free tier of the Gemini API.
+> **Note:** Limit is hit due to the free tier of the Gemini API(thats why only 11/20 is passed for others rate limit occurred).
 
 ![Behavior-Level Evaluation Results](./assests/image1.png)
 
