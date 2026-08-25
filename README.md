@@ -196,11 +196,11 @@ The evaluation suite is implemented in `tests/run_evaluation.py`. It runs behavi
 
 > **Note:** Limit is hit due to the free tier of the Gemini API.
 
-![Behavior-Level Evaluation Results](./assets/image1.png)
+![Behavior-Level Evaluation Results](./assests/image1.png)
 
-![Behavior-Level Evaluation Results](./assets/image2.png)
+![Behavior-Level Evaluation Results](./assests/image2.png)
 
-![Behavior-Level Evaluation Results (Final)](./assets/image3.png)
+![Behavior-Level Evaluation Results (Final)](./assests/image3.png)
 
 ### Running the Evaluation
 
