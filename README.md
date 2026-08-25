@@ -2,6 +2,7 @@
 
 [▶️ Watch the Aster & Row Chat Demo](https://youtu.be/StMYQiSUpMs)
 # Setup
+![Demo](./assests/demo.gif)
 
 Follow these steps to set up and run the project locally.
 
@@ -203,12 +204,17 @@ The evaluation suite is implemented in `tests/run_evaluation.py`. It runs behavi
 ![Behavior-Level Evaluation Results (Final)](./assests/image3.png)
 
 ### Running the Evaluation
-
-Run the behavior-level evaluation with:
-
-
 ```bash
 python tests/run_evaluation.py
+```
+
+Deterministic Regression Tests
+For the full deterministic regression suite, run:
+Run the behavior-level evaluation with:
+![](./assests/pytest.png)
+
+```bash
+python -m pytest tests -v
 ```
 
 
