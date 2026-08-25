@@ -194,7 +194,7 @@ The indexing script only needs to be run when the source documents are added or 
 
 The evaluation suite is implemented in `tests/run_evaluation.py`. It runs behavior-level evaluation cases and checks the agent against expected outcomes such as retrieval quality, grounding, tool usage, privacy, multi-turn behavior, and safe handoff.
 
-> **Note:** Limit is hit due to the free tier of the Gemini API(thats why only 11/20 is passed for others rate limit occurred).
+> **Note:** Limit is hit due to the free tier of the Gemini API(thats why only 12/20 is passed for others rate limit occurred).
 
 ![Behavior-Level Evaluation Results](./assests/image1.png)
 
