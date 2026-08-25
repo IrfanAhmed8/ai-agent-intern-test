@@ -1,9 +1,9 @@
 ## Demo
 
-[▶️ Watch the Aster & Row Chat Demo](https://youtu.be/StMYQiSUpMs)
+Recommended
+[▶️ Watch the Aster & Row Chat Demo on Youtube](https://youtu.be/StMYQiSUpMs)
 
-# Setup
-Follow these steps to set up and run the project locally.
+![Gif Video](./assests/demo.gif)
 
 
 ## Setup
