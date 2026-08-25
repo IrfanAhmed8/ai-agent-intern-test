@@ -192,31 +192,6 @@ Vector Embeddings
 The indexing script only needs to be run when the source documents are added or updated.
 
 
-## Evaluation Suite
-
-The evaluation suite is implemented in `tests/run_evaluation.py`. It runs behavior-level evaluation cases and checks the agent against expected outcomes such as retrieval quality, grounding, tool usage, privacy, multi-turn behavior, and safe handoff.
-
-! Note Limit is hit due to free tier of Gemini Api
-![Behavior-Level Evaluation Results](./assets/image1.png)
-![Behavior-Level Evaluation Results](./assets/image2.png)
-![Behavior-Level Evaluation Results(Final)](./assets/image3.png)
-
-### Running the Evaluation
-
-Run the behavior-level evaluation with:
-
-```bash
-python tests/run_evaluation.py
-
-Deterministic Regression Tests
-For the full deterministic regression suite, run:
-
-python -m pytest tests -v
-
-![Pytest Results](./assets/pytest.png)
-
-
-
 
 
 ## Bug Diary
