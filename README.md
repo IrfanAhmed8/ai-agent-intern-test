@@ -271,14 +271,7 @@ The system now:
 * Limits the amount of history passed to the model to avoid unnecessary context growth.
 
 
-Limitation
-for history i have a created a simple csv file. which contains all the query and response information. at the moment its working fine .but when there is multiple users we cant store it in a single ,it will raise contracdiction between user query
 
-how can i improve
-before moving to production i will try to create a database storing query and response for each user separately.
-
-2.) i am directly picking the last 5 conversation. due to which some model doesnt able to get the context properly.
- i will try to add a filter function of query before moving to the production
 
 ## Known Limitations
 
