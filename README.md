@@ -1,6 +1,6 @@
 ## Demo
 
-![Application Demo](./assets/demo.gif)
+[▶️ Watch the Aster & Row Chat Demo](https://youtu.be/StMYQiSUpMs)
 # Setup
 
 Follow these steps to set up and run the project locally.
@@ -274,6 +274,8 @@ python tests/run_evaluation.py
 The script evaluates the application against the configured test cases and reports the evaluation results in the terminal.
 
 Evaluation by Category
+
+
 
 
 ## Bug Diary
